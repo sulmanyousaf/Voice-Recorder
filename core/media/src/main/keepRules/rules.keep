@@ -1,0 +1,4 @@
+# Keep rules specific to the media module
+-keep class voice.recorder.recordingvoice.cct.core.media.recording.encoder.LameEncoder {
+    native <methods>;
+}

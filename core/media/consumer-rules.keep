@@ -1,0 +1,4 @@
+# Proguard rules specific to the media module consumed by app
+-keep class voice.recorder.recordingvoice.cct.core.media.recording.encoder.LameEncoder {
+    native <methods>;
+}
