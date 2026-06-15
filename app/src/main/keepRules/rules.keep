@@ -1,3 +1,9 @@
+#• Reflection: Code that is called dynamically at runtime.
+#• JNI (Native Code): Methods called from C/C++ code.
+#• JavaScript Interfaces: Methods exposed to a WebView.
+#• External Libraries: Some libraries require specific classes to remain unobfuscated to work correctly.
+# Add project specific R8 rules here.
+# AGP will combine all keep rule files in src/main/keepRules to pass to R8
 # Add project specific R8 rules here.
 # AGP will combine all keep rule files in src/main/keepRules to pass to R8
 #
