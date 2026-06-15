@@ -11,10 +11,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import voicerecorder.applico.voice.recorder.core.database.dao.RecordingDao
-import voicerecorder.applico.voice.recorder.core.database.entity.RecordingEntity
-import voicerecorder.applico.voice.recorder.core.media.storage.MediaStoreScanner
 import voicerecorder.applico.voice.recorder.core.media.storage.RecordingStorage
-import java.io.File
+import voicerecorder.applico.voice.recorder.data.recordings.scanner.MediaStoreScanner
 import java.io.IOException
 
 class RecordingRepositoryImplTest {
@@ -28,7 +26,7 @@ class RecordingRepositoryImplTest {
     fun setup() {
         dao = mockk()
         storage = mockk()
-        scanner = mockk()
+        scanner = mockk<MediaStoreScanner>()
         repository = RecordingRepositoryImpl(dao, storage, scanner)
     }
 

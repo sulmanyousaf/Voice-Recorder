@@ -1,4 +1,4 @@
-package voicerecorder.applico.voice.recorder.core.media.recording
+﻿package voicerecorder.applico.voice.recorder.core.media.recording
 
 import android.Manifest
 import android.app.Service

@@ -1,4 +1,4 @@
-package voicerecorder.applico.voice.recorder.core.notifications
+﻿package voicerecorder.applico.voice.recorder.core.notifications
 
 import android.app.Notification
 import android.app.NotificationChannel

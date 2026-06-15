@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.shortcut
+package voicerecorder.applico.voice.recorder.shortcut
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,7 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import voicerecorder.applico.voice.recorder.MainActivity
 import voicerecorder.applico.voice.recorder.core.notifications.NotificationHelper
-import voicerecorder.applico.voice.recorder.core.notifications.R
+import voicerecorder.applico.voice.recorder.R
 
 class VoiceRecorderShortcutManager(private val applicationContext: Context) {
 

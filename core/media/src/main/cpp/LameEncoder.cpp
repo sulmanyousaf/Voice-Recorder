@@ -9,7 +9,7 @@ static lame_global_flags *lameFlags = NULL;
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_voice_recorder_recordingvoice_cct_core_media_recording_encoder_LameEncoder_init(
+Java_voicerecorder_applico_voice_recorder_core_media_recording_encoder_LameEncoder_init(
         JNIEnv *env, jobject thiz, jint in_sample_rate, jint out_channel,
         jint out_sample_rate, jint out_bitrate, jint quality) {
     if (lameFlags != NULL) {
@@ -28,7 +28,7 @@ Java_voice_recorder_recordingvoice_cct_core_media_recording_encoder_LameEncoder_
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_voice_recorder_recordingvoice_cct_core_media_recording_encoder_LameEncoder_encode(
+Java_voicerecorder_applico_voice_recorder_core_media_recording_encoder_LameEncoder_encode(
         JNIEnv *env, jobject thiz, jshortArray buffer_l, jshortArray buffer_r,
         jint samples, jbyteArray mp3buf) {
     jshort *j_buffer_l = env->GetShortArrayElements(buffer_l, NULL);
@@ -55,7 +55,7 @@ Java_voice_recorder_recordingvoice_cct_core_media_recording_encoder_LameEncoder_
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_voice_recorder_recordingvoice_cct_core_media_recording_encoder_LameEncoder_flush(
+Java_voicerecorder_applico_voice_recorder_core_media_recording_encoder_LameEncoder_flush(
         JNIEnv *env, jobject thiz, jbyteArray mp3buf) {
     jsize mp3buf_size = env->GetArrayLength(mp3buf);
     jbyte *j_mp3buf = env->GetByteArrayElements(mp3buf, NULL);
@@ -68,7 +68,7 @@ Java_voice_recorder_recordingvoice_cct_core_media_recording_encoder_LameEncoder_
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_voice_recorder_recordingvoice_cct_core_media_recording_encoder_LameEncoder_close(
+Java_voicerecorder_applico_voice_recorder_core_media_recording_encoder_LameEncoder_close(
         JNIEnv *env, jobject thiz) {
     if (lameFlags != NULL) {
         lame_close(lameFlags);

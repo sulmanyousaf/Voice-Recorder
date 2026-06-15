@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Voice Recorder</string>
+    <string name="shortcut_uninstall_label">Uninstall</string>
 </resources>
