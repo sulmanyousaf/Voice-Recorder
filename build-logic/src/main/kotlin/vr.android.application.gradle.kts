@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "voice.recorder.recordingvoice.cct"
+    namespace = "voicerecorder.applico.voice.recorder"
     compileSdk = AndroidConfig.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "voice.recorder.recordingvoice.cct"
+        applicationId = "voicerecorder.applico.voice.recorder"
         minSdk = AndroidConfig.MIN_SDK
         targetSdk = AndroidConfig.TARGET_SDK
         versionCode = 1

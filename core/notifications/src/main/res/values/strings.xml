@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="notification_morning_title">Morning Reflection 🌅</string>
-    <string name="notification_morning_content">Start your day with a clear mind. Record your morning thoughts now!</string>
-    <string name="notification_evening_title">Evening Journal 🌌</string>
-    <string name="notification_evening_content">Reflect on your achievements today. Save a voice memo diary entry!</string>
-    <string name="notification_pinned_title">Voice Recorder Pinned Widget</string>
-    <string name="notification_pinned_content">Tap to open or start a new recording</string>
-    <string name="notification_pinned_action_new">New Recording</string>
-    <string name="notification_minimized_title">Voice Recorder running in background</string>
-    <string name="notification_minimized_content">Tap to return to the app.</string>
-    <string name="shortcut_uninstall_label">Uninstall</string>
+    <!-- Daily Reminder Channel -->
+    <string name="channel_daily_name">Applico Voice Notes Reminder</string>
+    <string name="channel_daily_desc">Morning and Evening engagement reminders</string>
+    
+    <!-- Active Recording Channel -->
+    <string name="channel_active_name">Active Recording Status</string>
+    <string name="channel_active_desc">Shows when a recording is in progress</string>
+    
+    <!-- Audio Recording Service Channel -->
+    <string name="channel_service_name">Audio Recording Service</string>
+    <string name="channel_service_desc">Shows active recording status</string>
+    
+    <!-- Notification Titles and Content -->
+    <string name="notif_daily_title">Applico Voice Notes</string>
+    <string name="notif_daily_content">Time to record your thoughts for the day.</string>
+
+    <string name="notification_minimized_title">App is running</string>
+    <string name="notification_minimized_content">Tap to return to voice recorder</string>
 </resources>

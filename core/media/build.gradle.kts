@@ -4,8 +4,6 @@ plugins {
 }
 
 android {
-    namespace = "voice.recorder.recordingvoice.cct.core.media"
-    
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")

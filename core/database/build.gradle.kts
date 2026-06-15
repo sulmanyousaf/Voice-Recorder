@@ -4,10 +4,6 @@ plugins {
     id("vr.android.koin")
 }
 
-android {
-    namespace = "voice.recorder.recordingvoice.cct.core.database"
-}
-
 dependencies {
     implementation(libsCatalog.findLibrary("room-runtime").get())
     implementation(libsCatalog.findLibrary("room-ktx").get())

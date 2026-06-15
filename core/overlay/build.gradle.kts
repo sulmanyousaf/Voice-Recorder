@@ -3,10 +3,6 @@ plugins {
     id("vr.android.koin")
 }
 
-android {
-    namespace = "voice.recorder.recordingvoice.cct.core.overlay"
-}
-
 dependencies {
     implementation(project(":core:common"))
     implementation(libsCatalog.findLibrary("androidx-core-ktx").get())

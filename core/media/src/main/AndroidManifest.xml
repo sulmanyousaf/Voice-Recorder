@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
     <application>
         <service
-            android:name="voice.recorder.recordingvoice.cct.core.media.recording.RecordingService"
+            android:name="voicerecorder.applico.voice.recorder.core.media.recording.RecordingService"
             android:foregroundServiceType="microphone"
             android:exported="false" />
 
         <service
-            android:name="voice.recorder.recordingvoice.cct.core.media.playback.PlaybackService"
+            android:name="voicerecorder.applico.voice.recorder.core.media.playback.PlaybackService"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback"
             tools:ignore="ExportedService">

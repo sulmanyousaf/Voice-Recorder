@@ -3,10 +3,6 @@ plugins {
     id("vr.android.koin")
 }
 
-android {
-    namespace = "voice.recorder.recordingvoice.cct.core.datastore"
-}
-
 dependencies {
     implementation(libsCatalog.findLibrary("datastore-preferences").get())
     

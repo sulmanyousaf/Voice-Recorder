@@ -13,7 +13,7 @@ object AndroidConfig {
 
 fun Project.moduleNamespace(): String {
     val path = project.path.removePrefix(":").replace(":", ".")
-    return "voice.recorder.recordingvoice.cct.$path".trimEnd('.')
+    return "voicerecorder.applico.voice.recorder.$path".trimEnd('.')
 }
 
 val Project.libsCatalog: VersionCatalog

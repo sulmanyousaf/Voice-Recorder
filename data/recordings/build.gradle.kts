@@ -3,10 +3,6 @@ plugins {
     id("vr.android.koin")
 }
 
-android {
-    namespace = "voice.recorder.recordingvoice.cct.data.recordings"
-}
-
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:database"))
@@ -14,6 +10,8 @@ dependencies {
     implementation(project(":core:media"))
     
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 }
