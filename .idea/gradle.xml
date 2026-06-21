@@ -31,8 +31,12 @@
             <option value="$PROJECT_DIR$/core/navigation" />
             <option value="$PROJECT_DIR$/core/notifications" />
             <option value="$PROJECT_DIR$/core/overlay" />
+            <option value="$PROJECT_DIR$/core/permissions" />
+            <option value="$PROJECT_DIR$/core/shortcuts" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data/recordings" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/recordings" />
           </set>
         </option>
       </GradleProjectSettings>
