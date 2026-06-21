@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.notifications
+package voicerecorder.applico.voice.recorder.core.notifications
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -32,7 +32,7 @@ class RecordingNotificationManager(private val context: Context) {
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun buildNotification(durationText: String, amplitudes: FloatArray): Notification {
+    fun buildNotification(durationText: String): Notification {
         val customLayout = RemoteViews(context.packageName, R.layout.notification_recording).apply {
             setTextViewText(R.id.text_duration, durationText)
         }
@@ -47,8 +47,8 @@ class RecordingNotificationManager(private val context: Context) {
             .build()
     }
 
-    fun updateNotification(durationText: String, amplitudes: FloatArray) {
-        val notification = buildNotification(durationText, amplitudes)
+    fun updateNotification(durationText: String) {
+        val notification = buildNotification(durationText)
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 }

@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.media.recording
+package voicerecorder.applico.voice.recorder.core.media.recording
 
 import android.Manifest
 import android.app.Service
@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.seconds
 import org.koin.android.ext.android.inject
 import voicerecorder.applico.voice.recorder.core.media.storage.RecordingStorage
 import voicerecorder.applico.voice.recorder.core.notifications.RecordingNotificationManager
@@ -22,6 +23,7 @@ class RecordingService : Service() {
     private val recordingEngine: AudioRecordEngine by inject()
     private val notificationManager: RecordingNotificationManager by inject()
     private val storage: RecordingStorage by inject()
+    private val serviceManager: RecordingServiceManager by inject()
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var durationSeconds = 0
@@ -75,7 +77,7 @@ class RecordingService : Service() {
         audioFocusManager?.requestAudioFocus()
         setupBluetoothSco()
         
-        val notification = notificationManager.buildNotification("00:00", FloatArray(0))
+        val notification = notificationManager.buildNotification("00:00")
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             startForeground(
@@ -88,6 +90,7 @@ class RecordingService : Service() {
         }
 
         recordingEngine.start(tempFile, format, 44100, 128000)
+        serviceManager.updateState(RecordingState.Recording(0, FloatArray(0)))
         startTimer()
     }
 
@@ -96,12 +99,14 @@ class RecordingService : Service() {
         durationSeconds = 0
         timerJob = serviceScope.launch {
             while (isActive) {
-                delay(1000)
+                delay(1.seconds)
                 durationSeconds++
                 val minutes = durationSeconds / 60
                 val seconds = durationSeconds % 60
-                val durationText = String.format("%02d:%02d", minutes, seconds)
-                notificationManager.updateNotification(durationText, FloatArray(0))
+                val durationText = String.format(java.util.Locale.getDefault(), "%02d:%02d", minutes, seconds)
+                val amplitudes = FloatArray(0)
+                notificationManager.updateNotification(durationText)
+                serviceManager.updateState(RecordingState.Recording(durationSeconds, amplitudes))
             }
         }
     }
@@ -201,6 +206,7 @@ class RecordingService : Service() {
         audioFocusManager?.abandonAudioFocus()
         teardownBluetoothSco()
         stopForeground(STOP_FOREGROUND_REMOVE)
+        serviceManager.updateState(RecordingState.Idle)
         stopSelf()
     }
 
