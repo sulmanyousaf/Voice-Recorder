@@ -21,7 +21,8 @@ The project is heavily modularized to ensure separation of concerns and fast bui
 - **Compile SDK**: 37
 - **Java Version**: 21
 - **Language**: Kotlin `2.4.0`
-- **UI Framework**: Jetpack Compose (BOM `2026.05.01`)
+- **UI Framework**: Jetpack Compose (BOM `2026.06.00`)
+- **Native Toolchain**: NDK `30.0.14904198`, CMake `4.1.2`
 - **Dependency Injection**: Koin `4.2.2`
 - **Database**: Room `2.8.4`
 - **Concurrency**: Kotlin Coroutines & Flow

@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.datastore
+package voicerecorder.applico.voice.recorder.core.datastore
 
 import android.content.Context
 import androidx.datastore.preferences.core.*
@@ -16,7 +16,9 @@ data class UserSettings(
     val bitRate: Int = 128000,
     val enableNotifications: Boolean = true,
     val pauseForCall: Boolean = true,
-    val languageCode: String = "en"
+    val languageCode: String = "en",
+    val skipSilence: Boolean = false,
+    val micBoost: Boolean = false
 )
 
 class AudioSettingsDataStore(private val context: Context) {
@@ -27,6 +29,8 @@ class AudioSettingsDataStore(private val context: Context) {
         val ENABLE_NOTIFICATIONS = booleanPreferencesKey("enable_notifications")
         val PAUSE_FOR_CALL = booleanPreferencesKey("pause_for_call")
         val LANGUAGE_CODE = stringPreferencesKey("language_code")
+        val SKIP_SILENCE = booleanPreferencesKey("skip_silence")
+        val MIC_BOOST = booleanPreferencesKey("mic_boost")
     }
 
     fun getLanguageBlocking(): String {
@@ -46,7 +50,9 @@ class AudioSettingsDataStore(private val context: Context) {
             bitRate = prefs[Keys.BIT_RATE] ?: 128000,
             enableNotifications = prefs[Keys.ENABLE_NOTIFICATIONS] ?: true,
             pauseForCall = prefs[Keys.PAUSE_FOR_CALL] ?: true,
-            languageCode = prefs[Keys.LANGUAGE_CODE] ?: "en"
+            languageCode = prefs[Keys.LANGUAGE_CODE] ?: "en",
+            skipSilence = prefs[Keys.SKIP_SILENCE] ?: false,
+            micBoost = prefs[Keys.MIC_BOOST] ?: false
         )
     }
 
@@ -56,4 +62,6 @@ class AudioSettingsDataStore(private val context: Context) {
     suspend fun updateNotifications(enabled: Boolean) = context.dataStore.edit { it[Keys.ENABLE_NOTIFICATIONS] = enabled }
     suspend fun updatePauseForCall(enabled: Boolean) = context.dataStore.edit { it[Keys.PAUSE_FOR_CALL] = enabled }
     suspend fun updateLanguage(code: String) = context.dataStore.edit { it[Keys.LANGUAGE_CODE] = code }
+    suspend fun updateSkipSilence(enabled: Boolean) = context.dataStore.edit { it[Keys.SKIP_SILENCE] = enabled }
+    suspend fun updateMicBoost(enabled: Boolean) = context.dataStore.edit { it[Keys.MIC_BOOST] = enabled }
 }
