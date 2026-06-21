@@ -15,10 +15,14 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:notifications"))
     implementation(project(":core:overlay"))
+    implementation(project(":core:permissions"))
+    implementation(project(":core:shortcuts"))
+    implementation(project(":feature:recordings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)

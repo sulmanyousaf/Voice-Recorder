@@ -1,4 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Voice Recorder</string>
-    <string name="shortcut_uninstall_label">Uninstall</string>
+    <string name="request_microphone_permission">Request Microphone Permission</string>
+    <string name="microphone_permission_required">Microphone Permission Required</string>
+    <string name="microphone_permission_rationale">We need access to your microphone to record audio.</string>
 </resources>

@@ -1,4 +1,4 @@
-package voicerecorder.applico.voice.recorder.viewmodel
+package voicerecorder.applico.voice.recorder.feature.recordings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

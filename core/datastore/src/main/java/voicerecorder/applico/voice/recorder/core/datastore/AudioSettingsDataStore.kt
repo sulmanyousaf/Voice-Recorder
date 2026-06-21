@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 
 private val Context.dataStore by preferencesDataStore("audio_settings")
 
@@ -61,7 +63,10 @@ class AudioSettingsDataStore(private val context: Context) {
     suspend fun updateBitRate(bitRate: Int) = context.dataStore.edit { it[Keys.BIT_RATE] = bitRate }
     suspend fun updateNotifications(enabled: Boolean) = context.dataStore.edit { it[Keys.ENABLE_NOTIFICATIONS] = enabled }
     suspend fun updatePauseForCall(enabled: Boolean) = context.dataStore.edit { it[Keys.PAUSE_FOR_CALL] = enabled }
-    suspend fun updateLanguage(code: String) = context.dataStore.edit { it[Keys.LANGUAGE_CODE] = code }
+    suspend fun updateLanguage(code: String) {
+        context.dataStore.edit { it[Keys.LANGUAGE_CODE] = code }
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code))
+    }
     suspend fun updateSkipSilence(enabled: Boolean) = context.dataStore.edit { it[Keys.SKIP_SILENCE] = enabled }
     suspend fun updateMicBoost(enabled: Boolean) = context.dataStore.edit { it[Keys.MIC_BOOST] = enabled }
 }

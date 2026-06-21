@@ -9,8 +9,9 @@ include(":data:recordings")
 include(":core:navigation")
 include(":core:notifications")
 include(":core:overlay")
-
-
+include(":core:permissions")
+include(":core:shortcuts")
+include(":feature:recordings")
 pluginManagement {
     includeBuild("build-logic")
     repositories {
