@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.media.recording
+package voicerecorder.applico.voice.recorder.core.media.recording
 
 import android.annotation.SuppressLint
 import android.media.AudioFormat
@@ -50,9 +50,23 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
             start(outputFile, sampleRate, bitRate)
         }
 
+        if (audioRecord?.state != AudioRecord.STATE_INITIALIZED) {
+            audioRecord?.release()
+            audioRecord = null
+            throw IllegalStateException("AudioRecord failed to initialize. Microphone permission might be missing.")
+        }
+
         isRecording = true
         isPaused = false
-        audioRecord?.startRecording()
+        
+        try {
+            audioRecord?.startRecording()
+        } catch (e: Exception) {
+            isRecording = false
+            audioRecord?.release()
+            audioRecord = null
+            throw e
+        }
 
         recordJob = scope.launch {
             val buffer = ShortArray(2048)

@@ -20,10 +20,12 @@ class NotificationHelper(private val context: Context) {
     companion object {
         const val CHANNEL_DAILY = "voice_recorder_channel_daily"
         const val CHANNEL_PINNED = "voice_recorder_channel_pinned"
+        const val CHANNEL_RECORDING = "voice_recorder_channel_recording"
 
         const val NOTIFICATION_ID_DAILY = 2001
         const val NOTIFICATION_ID_PINNED = 2002
         const val NOTIFICATION_ID_KILL_APP = 2003
+        const val NOTIFICATION_ID_RECORDING = 2004
 
         const val KEY_OPEN_FROM = "KEY_OPEN_FROM"
         const val KEY_OPEN_TO = "KEY_OPEN_TO"
@@ -67,8 +69,18 @@ class NotificationHelper(private val context: Context) {
             setShowBadge(false)
         }
 
+        val recordingChannel = NotificationChannel(
+            CHANNEL_RECORDING,
+            context.getString(R.string.channel_service_name),
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = context.getString(R.string.channel_service_desc)
+            setShowBadge(false)
+        }
+
         notificationManager.createNotificationChannel(dailyChannel)
         notificationManager.createNotificationChannel(pinnedChannel)
+        notificationManager.createNotificationChannel(recordingChannel)
     }
 
     // --- Daily Reminders scheduling (AlarmManager) ---
@@ -226,5 +238,51 @@ class NotificationHelper(private val context: Context) {
         } else {
             NotificationManagerCompat.from(context).areNotificationsEnabled()
         }
+    }
+
+    // --- Active Recording Foreground Notification ---
+    fun buildRecordingNotification(
+        isPaused: Boolean,
+        durationStr: String,
+        pauseResumeIntent: PendingIntent,
+        stopIntent: PendingIntent
+    ): android.app.Notification {
+        
+        val title = if (isPaused) {
+            context.getString(R.string.notification_recording_paused)
+        } else {
+            context.getString(R.string.notification_recording_title)
+        }
+
+        val pauseResumeActionLabel = if (isPaused) {
+            context.getString(R.string.notification_action_resume)
+        } else {
+            context.getString(R.string.notification_action_pause)
+        }
+        
+        val pauseResumeIcon = if (isPaused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause
+
+        val bodyIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val bodyPendingIntent = PendingIntent.getActivity(
+            context,
+            4005,
+            bodyIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        return NotificationCompat.Builder(context, CHANNEL_RECORDING)
+            .setSmallIcon(android.R.drawable.ic_btn_speak_now)
+            .setContentTitle(title)
+            .setContentText(durationStr)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOngoing(true)
+            .setSilent(true)
+            .setContentIntent(bodyPendingIntent)
+            .addAction(pauseResumeIcon, pauseResumeActionLabel, pauseResumeIntent)
+            .addAction(android.R.drawable.ic_media_previous, context.getString(R.string.notification_action_stop), stopIntent)
+            .setStyle(androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(0, 1))
+            .build()
     }
 }

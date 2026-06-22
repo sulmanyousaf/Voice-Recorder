@@ -5,5 +5,10 @@ plugins {
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(project(":core:datastore"))
+    implementation(project(":core:notifications"))
+    implementation(project(":core:media"))
+    implementation(project(":core:permissions"))
+    implementation(project(":core:overlay"))
     implementation(project(":data:recordings"))
 }

@@ -11,6 +11,7 @@ import voicerecorder.applico.voice.recorder.core.media.di.mediaModule
 import voicerecorder.applico.voice.recorder.core.notifications.di.notificationsModule
 import voicerecorder.applico.voice.recorder.core.overlay.di.overlayModule
 import voicerecorder.applico.voice.recorder.data.recordings.di.recordingsDataModule
+import voicerecorder.applico.voice.recorder.feature.recordings.di.featureRecordingsModule
 import voicerecorder.applico.voice.recorder.di.appModule
 
 class VoiceRecorderApplication : Application() {
@@ -28,6 +29,7 @@ class VoiceRecorderApplication : Application() {
                 recordingsDataModule,
                 notificationsModule,
                 overlayModule,
+                featureRecordingsModule,
                 appModule
             )
         }

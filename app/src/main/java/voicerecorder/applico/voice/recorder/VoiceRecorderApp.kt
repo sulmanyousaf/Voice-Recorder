@@ -26,12 +26,14 @@ import voicerecorder.applico.voice.recorder.core.overlay.OverlayManager
 import voicerecorder.applico.voice.recorder.core.overlay.SnackbarManager
 import voicerecorder.applico.voice.recorder.core.overlay.model.Overlay
 import voicerecorder.applico.voice.recorder.core.permissions.rememberMicrophonePermissionHandler
+import voicerecorder.applico.voice.recorder.feature.recordings.service.RecordingController
 
 @Composable
 fun VoiceRecorderApp(
     windowSizeClass: WindowSizeClass,
     overlayManager: OverlayManager = koinInject(),
-    snackbarManager: SnackbarManager = koinInject()
+    snackbarManager: SnackbarManager = koinInject(),
+    recordingController: RecordingController = koinInject()
 ) {
     val currentOverlay by overlayManager.currentOverlay.collectAsState()
     val permissionHandler = rememberMicrophonePermissionHandler(
@@ -72,6 +74,32 @@ fun VoiceRecorderApp(
                 modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
             ) {
                 Text("Test Snackbar")
+            }
+            
+            // --- Temporary Foreground Service Testing Buttons ---
+            Button(
+                onClick = { recordingController.startRecording() },
+                modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
+            ) {
+                Text("Start Service")
+            }
+            Button(
+                onClick = { recordingController.pauseRecording() },
+                modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
+            ) {
+                Text("Pause")
+            }
+            Button(
+                onClick = { recordingController.resumeRecording() },
+                modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
+            ) {
+                Text("Resume")
+            }
+            Button(
+                onClick = { recordingController.stopRecording() },
+                modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
+            ) {
+                Text("Stop Service")
             }
         }
     }

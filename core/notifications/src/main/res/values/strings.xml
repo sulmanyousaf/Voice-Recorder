@@ -28,4 +28,10 @@
     <string name="notification_pinned_title">Recording in progress</string>
     <string name="notification_pinned_content">Tap here to manage recording</string>
     <string name="notification_pinned_action_new">Stop</string>
+    
+    <string name="notification_recording_title">Recording</string>
+    <string name="notification_recording_paused">Paused</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="notification_action_resume">Resume</string>
+    <string name="notification_action_stop">Stop</string>
 </resources>

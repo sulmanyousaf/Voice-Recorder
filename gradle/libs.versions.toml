@@ -16,6 +16,7 @@ navigation3Lifecycle = "2.11.0"
 kotlinxSerialization = "1.11.0"
 ksp = "2.3.9"
 media3 = "1.10.1"
+mediaVersion = "1.8.0"
 appcompat = "1.7.1"
 material = "1.14.0"
 detekt = "1.23.8"
@@ -59,6 +60,9 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
+
+# Media (for NotificationCompat.MediaStyle)
+androidx-media = { group = "androidx.media", name = "media", version.ref = "mediaVersion" }
 
 # Navigation 3
 androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
