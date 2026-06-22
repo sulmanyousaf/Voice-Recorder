@@ -5,5 +5,5 @@ import voicerecorder.applico.voice.recorder.feature.recordings.service.Recording
 import voicerecorder.applico.voice.recorder.feature.recordings.service.RecordingControllerImpl
 
 val featureRecordingsModule = module {
-    single<RecordingController> { RecordingControllerImpl(get(), get()) }
+    single<RecordingController> { RecordingControllerImpl(get(), get(), get()) }
 }

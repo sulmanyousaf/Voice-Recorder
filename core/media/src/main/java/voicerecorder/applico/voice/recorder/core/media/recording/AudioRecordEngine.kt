@@ -23,6 +23,12 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
     private var isRecording = false
     private var isPaused = false
 
+    var gainFactor: Float = 1.0f
+    var skipSilence: Boolean = false
+    private val SILENCE_THRESHOLD = 0.08f
+    private var silentBufferCount = 0
+    private var silentBufferLimit = 21 // Dynamically calculated later
+
     @SuppressLint("MissingPermission")
     fun start(outputFile: File, format: String, sampleRate: Int, bitRate: Int) {
         if (isRecording) return
@@ -56,8 +62,12 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
             throw IllegalStateException("AudioRecord failed to initialize. Microphone permission might be missing.")
         }
 
+        silentBufferLimit = sampleRate / 2048
+        if (silentBufferLimit < 1) silentBufferLimit = 1
+
         isRecording = true
         isPaused = false
+        silentBufferCount = 0
         
         try {
             audioRecord?.startRecording()
@@ -78,14 +88,36 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
                 
                 val read = audioRecord?.read(buffer, 0, buffer.size) ?: 0
                 if (read > 0) {
-                    encoder?.encode(buffer, read)
-                    
                     var max = 0
                     for (i in 0 until read) {
-                        val value = abs(buffer[i].toInt())
-                        if (value > max) max = value
+                        var pcmVal = buffer[i].toInt()
+                        if (gainFactor != 1.0f) {
+                            pcmVal = (pcmVal * gainFactor).toInt()
+                            if (pcmVal > 32767) pcmVal = 32767
+                            else if (pcmVal < -32768) pcmVal = -32768
+                            buffer[i] = pcmVal.toShort()
+                        }
+                        
+                        val absValue = abs(pcmVal)
+                        if (absValue > max) max = absValue
                     }
-                    _amplitudeFlow.emit(max.toFloat() / 32767f)
+                    
+                    val amplitude = max.toFloat() / 32767f
+                    _amplitudeFlow.emit(amplitude)
+                    
+                    if (skipSilence) {
+                        if (amplitude < SILENCE_THRESHOLD) {
+                            silentBufferCount++
+                        } else {
+                            silentBufferCount = 0
+                        }
+                        
+                        if (silentBufferCount < silentBufferLimit) {
+                            encoder?.encode(buffer, read)
+                        }
+                    } else {
+                        encoder?.encode(buffer, read)
+                    }
                 }
             }
         }

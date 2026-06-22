@@ -6,9 +6,13 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 import voicerecorder.applico.voice.recorder.core.overlay.SnackbarManager
+import voicerecorder.applico.voice.recorder.core.media.recording.AudioRecordEngine
 import voicerecorder.applico.voice.recorder.core.permissions.R as PermissionsR
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 interface RecordingController {
+    val amplitudeFlow: Flow<Float>
     fun startRecording()
     fun pauseRecording()
     fun resumeRecording()
@@ -17,8 +21,12 @@ interface RecordingController {
 
 class RecordingControllerImpl(
     private val context: Context,
-    private val snackbarManager: SnackbarManager
+    private val snackbarManager: SnackbarManager,
+    private val audioRecordEngine: AudioRecordEngine
 ) : RecordingController {
+
+    override val amplitudeFlow: Flow<Float>
+        get() = audioRecordEngine.amplitudeFlow
     override fun startRecording() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             snackbarManager.showMessage(PermissionsR.string.error_permission_microphone)

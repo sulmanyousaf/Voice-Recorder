@@ -25,6 +25,10 @@ This document tracks all completed features of the Voice Recorder app and outlin
    - Fully modularized architecture (Core, Data, UI).
    - Dependency Injection via Koin.
    - Static Code Analysis via Detekt.
+7. **Audio Engine DSP Math (Phase 2)**
+    - Real-time Amplitude & Waveform Calculation in the PCM byte stream.
+    - Digital Signal Amplifier (Mic Boost Logic).
+    - Voice Activity Detection (Silence Skipping with Hold Time).
 
 ---
 
@@ -34,10 +38,7 @@ This document tracks all completed features of the Voice Recorder app and outlin
    - Main screen listing all recordings.
    - Active recording screen with live waveform visualizer.
    - Settings screen to choose recording format (WAV vs AAC).
-2. **Audio Engine Math (Phase 2)**
-   - Real-time Amplitude & Waveform Calculation in the PCM byte stream.
-   - Silence Skipping & Mic Boost Logic.
-3. **Meaningful Unit Tests**
+2. **Meaningful Unit Tests**
    - Mocking the audio byte stream to test the `WavEncoder` and `AacEncoder`.
    - Testing `RecordingRepositoryImpl` mapping logic.
 
@@ -68,7 +69,3 @@ To stand out in the Google Play Store and compete with top-tier voice recorder a
    - Build a standalone smartwatch interface to start/stop recordings remotely from the user's wrist.
 10. **Scheduled Recording**
     - Allow users to set a specific date and time for the app to automatically wake up and start recording (e.g., for lectures or meetings).
-11. **Skip Silence (Voice Activity Detection)**
-    - Automatically pause recording when no one is speaking to save storage space and remove dead air from playback.
-12. **Microphone Gain Boost (200% Volume)**
-    - Implement a digital audio amplifier in the PCM byte stream to artificially boost the microphone volume beyond 100% for recording distant sounds.

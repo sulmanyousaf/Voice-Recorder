@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.media.recording.encoder
+package voicerecorder.applico.voice.recorder.core.media.recording.encoder
 
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
@@ -13,8 +13,10 @@ class AacEncoder(private val useMuxer: Boolean = true) : AudioEncoder {
     private var audioTrackIndex = -1
     private val bufferInfo = MediaCodec.BufferInfo()
     private var presentationTimeUs = 0L
+    private var sampleRate = 44100
 
     override fun start(outputFile: File, sampleRate: Int, bitRate: Int) {
+        this.sampleRate = sampleRate
         val format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, sampleRate, 1).apply {
             setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)
             setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
@@ -38,14 +40,10 @@ class AacEncoder(private val useMuxer: Boolean = true) : AudioEncoder {
             val inputBuffer = codec.getInputBuffer(inputBufferIndex) ?: return
             inputBuffer.clear()
             
-            val byteBuffer = ByteBuffer.allocate(bytesRead * 2)
-            for (i in 0 until bytesRead) {
-                byteBuffer.putShort(pcmBuffer[i])
-            }
-            inputBuffer.put(byteBuffer.array())
+            inputBuffer.asShortBuffer().put(pcmBuffer, 0, bytesRead)
             
             codec.queueInputBuffer(inputBufferIndex, 0, bytesRead * 2, presentationTimeUs, 0)
-            presentationTimeUs += (bytesRead * 1000000L) / 44100
+            presentationTimeUs += (bytesRead * 1000000L) / sampleRate
         }
 
         drainEncoder(false)
