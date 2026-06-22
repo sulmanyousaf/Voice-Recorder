@@ -28,7 +28,7 @@ This document tracks all completed features of the Voice Recorder app and outlin
 7. **Audio Engine DSP Math (Phase 2)**
     - Real-time Amplitude & Waveform Calculation in the PCM byte stream.
     - Digital Signal Amplifier (Mic Boost Logic).
-    - Voice Activity Detection (Silence Skipping with Hold Time).
+    - Voice Activity Detection (Silence Skipping with a 1-second hold-time delay to preserve natural speech cadence).
 
 ---
 

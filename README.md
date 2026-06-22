@@ -42,7 +42,7 @@ The project is heavily modularized to ensure separation of concerns and fast bui
 3. **Strict Validation & Error Handling**:
    The `RecordingController` acts as a strict gatekeeper, ensuring `RECORD_AUDIO` and `POST_NOTIFICATIONS` are granted before allocating resources. Disk operations are wrapped in Kotlin `runCatching` blocks, and errors are elegantly pushed to a global `SnackbarManager`.
 4. **Digital Signal Processing (DSP)**:
-   The audio engine intercepts the raw PCM byte stream to apply real-time math: extracting live amplitude for UI waveforms, digitally boosting microphone gain (200%), and seamlessly skipping dead air with voice activity detection and hold-time algorithms.
+   The audio engine intercepts the raw PCM byte stream to apply real-time math: extracting live amplitude for UI waveforms, digitally boosting microphone gain (200%), and seamlessly skipping dead air with voice activity detection and a 1-second hold-time delay to preserve natural speech cadence.
 5. **Build Logic**: 
    Instead of copy-pasting Gradle code, the project uses convention plugins (e.g. `id("vr.android.library")`) to enforce uniform compiler options, Jetpack Compose settings, and Detekt analysis across all modules.
 
