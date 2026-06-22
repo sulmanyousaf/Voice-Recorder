@@ -10,9 +10,11 @@ The project is heavily modularized to ensure separation of concerns and fast bui
 - **`app`**: The main application module containing the entry point and dependency injection setup.
 - **`build-logic`**: Contains Gradle convention plugins (`vr.android.application`, `vr.android.library`, etc.) to centralize build configurations and dependencies.
 - **`core:designsystem`**: Houses the UI theme, typography, colors, and reusable composables.
-- **`core:media`**: The audio engine. Handles `AudioRecord`, encoders (`WavEncoder`, `AacEncoder`), background `RecordingService`, and `AndroidRecordingStorage` for MediaStore interactions.
-- **`core:notifications`**: Manages all notification channels, active recording pinned notifications, and daily reminders using AlarmManager.
+- **`core:media`**: The audio engine. Handles `AudioRecord`, encoders (`WavEncoder`, `AacEncoder`), and `AndroidRecordingStorage` for MediaStore interactions.
+- **`core:notifications`**: Manages all notification channels, active recording MediaStyle notifications, and daily reminders using AlarmManager.
+- **`core:permissions`**: Provides centralized string resources and logic for strict runtime permission handling.
 - **`data:recordings`**: The data layer containing the Room database (`RecordingDatabase`), DAOs, and the repository (`RecordingRepositoryImpl`) for persisting recording metadata.
+- **`feature:recordings`**: The active recording domain. Houses the foreground `VoiceRecorderService`, `AudioFocusManager` for managing audio interruptions, and `RecordingControllerImpl` for state and permission validation.
 
 ## 🛠 Tech Stack & Versions
 
@@ -33,12 +35,12 @@ The project is heavily modularized to ensure separation of concerns and fast bui
 
 ## 💡 Implementation Details
 
-1. **Audio Engine**: 
-   Records raw PCM audio data via `AudioRecord` and streams it to specialized encoders. This prevents memory `OutOfMemory` exceptions on long recordings.
+1. **Foreground Audio Engine**: 
+   Records raw PCM audio data via `AudioRecord` inside a resilient `VoiceRecorderService` to prevent the OS from killing it. It respects `AudioFocus`, pausing automatically during phone calls or external media interruptions.
 2. **Storage Management**: 
    Audio files are initially saved to the cache directory (`getTempFile`). Upon completion, they are securely moved to the public Android `Recordings/VoiceRecorder` directory using the `MediaStore` API.
-3. **Error Handling**:
-   Disk operations are wrapped in Kotlin `runCatching` blocks, returning `Result` states so the UI and service layer can gracefully abort if storage is full or permissions are missing.
+3. **Strict Validation & Error Handling**:
+   The `RecordingController` acts as a strict gatekeeper, ensuring `RECORD_AUDIO` and `POST_NOTIFICATIONS` are granted before allocating resources. Disk operations are wrapped in Kotlin `runCatching` blocks, and errors are elegantly pushed to a global `SnackbarManager`.
 4. **Build Logic**: 
    Instead of copy-pasting Gradle code, the project uses convention plugins (e.g. `id("vr.android.library")`) to enforce uniform compiler options, Jetpack Compose settings, and Detekt analysis across all modules.
 

@@ -5,9 +5,9 @@ This document tracks all completed features of the Voice Recorder app and outlin
 ## ✅ Completed Features (Backend & Logic)
 
 1. **Audio Recording Engine**
-   - High-performance raw PCM audio capture.
-   - Live encoding to WAV and AAC/MP4 formats.
-   - Foreground Service (`RecordingService`) to ensure the OS doesn't kill the app while recording.
+   - High-performance raw PCM audio capture with live encoding to WAV and AAC/MP4.
+   - Resilient `VoiceRecorderService` (Foreground Service) ensuring the OS never kills the app.
+   - `AudioFocusManager` handles phone calls and external media interruptions gracefully.
 2. **Storage & MediaStore Integration**
    - Temporary cache storage during active recording.
    - Final export to the public `Recordings/VoiceRecorder` directory via Android `MediaStore`.
@@ -16,9 +16,12 @@ This document tracks all completed features of the Voice Recorder app and outlin
    - Room database tracking recording metadata (Name, Duration, Size, Path, URI).
    - Clean Architecture Repository (`RecordingRepositoryImpl`) bridging data and domain layers.
 4. **Notifications**
-   - **Active Recording**: Pinned notification showing the active recording status.
+   - **Active Recording**: Interactive `MediaStyle` pinned notification (Play/Pause/Stop controls).
    - **Daily Reminders**: Scheduled notifications to encourage user engagement (Morning/Evening).
-5. **Project Infrastructure**
+5. **Strict Permission Handling**
+   - Graceful runtime checks for `RECORD_AUDIO` and `POST_NOTIFICATIONS` (Android 13+).
+   - Elegant error propagation to the UI via a global `SnackbarManager` (Event Bus).
+6. **Project Infrastructure**
    - Fully modularized architecture (Core, Data, UI).
    - Dependency Injection via Koin.
    - Static Code Analysis via Detekt.
@@ -31,9 +34,9 @@ This document tracks all completed features of the Voice Recorder app and outlin
    - Main screen listing all recordings.
    - Active recording screen with live waveform visualizer.
    - Settings screen to choose recording format (WAV vs AAC).
-2. **Graceful Permission Handling**
-   - Polished UI rationale explaining why the Microphone permission is needed before requesting it.
-   - Handling permanent denials by guiding the user to the OS Settings.
+2. **Audio Engine Math (Phase 2)**
+   - Real-time Amplitude & Waveform Calculation in the PCM byte stream.
+   - Silence Skipping & Mic Boost Logic.
 3. **Meaningful Unit Tests**
    - Mocking the audio byte stream to test the `WavEncoder` and `AacEncoder`.
    - Testing `RecordingRepositoryImpl` mapping logic.
