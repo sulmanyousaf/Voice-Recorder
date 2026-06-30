@@ -29,6 +29,9 @@ This document tracks all completed features of the Voice Recorder app and outlin
     - Real-time Amplitude & Waveform Calculation in the PCM byte stream.
     - Digital Signal Amplifier (Mic Boost Logic).
     - Voice Activity Detection (Silence Skipping with a 1-second hold-time delay to preserve natural speech cadence).
+8. **Hardware Noise Reduction & Echo Cancellation**
+    - Intercepts raw audio to apply physical Android `NoiseSuppressor` and `AcousticEchoCanceler` chips.
+    - Gracefully handles budget devices with manufacturer-locked audiofx firmware.
 
 ---
 
@@ -63,8 +66,8 @@ To stand out in the Google Play Store and compete with top-tier voice recorder a
    - Implement biometric (fingerprint/face) or PIN lock to protect sensitive recordings from unauthorized access.
 7. **Set as Default App**
    - Support `android.provider.MediaStore.RECORD_SOUND` intents so users can launch our app directly from other apps (like Messaging apps) to record audio.
-8. **Noise Reduction & Echo Cancellation**
-   - Implement Android's hardware `NoiseSuppressor` and `AcousticEchoCanceler` to improve audio clarity in noisy environments.
+8. **Software Noise Reduction (C++ Fallback)**
+   - Integrate a native C++ audio processing library (like RNNoise or WebRTC) as a software fallback for devices that block or lack hardware noise reduction chips.
 9. **Wear OS Companion App**
    - Build a standalone smartwatch interface to start/stop recordings remotely from the user's wrist.
 10. **Scheduled Recording**
