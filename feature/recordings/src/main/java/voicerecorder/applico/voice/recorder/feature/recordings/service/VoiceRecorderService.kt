@@ -106,6 +106,7 @@ class VoiceRecorderService : Service() {
             val bitRate = settings.bitRate
             val skipSilence = settings.skipSilence
             val micBoost = settings.micBoost
+            val noiseReduction = settings.noiseReduction
             
             val tempFileResult = recordingStorage.getTempFile(format)
             if (tempFileResult.isFailure) {
@@ -128,6 +129,7 @@ class VoiceRecorderService : Service() {
             try {
                 audioRecordEngine.skipSilence = skipSilence
                 audioRecordEngine.gainFactor = if (micBoost) 2.0f else 1.0f
+                audioRecordEngine.noiseReduction = noiseReduction
                 audioRecordEngine.start(currentTempFile!!, format, sampleRate, bitRate)
             } catch (e: Exception) {
                 // If it fails (e.g. no microphone permission), gracefully abort

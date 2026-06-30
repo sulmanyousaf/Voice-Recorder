@@ -10,12 +10,17 @@ import kotlinx.coroutines.flow.SharedFlow
 import voicerecorder.applico.voice.recorder.core.media.recording.encoder.*
 import java.io.File
 import kotlin.math.abs
+import android.media.audiofx.NoiseSuppressor
+import android.media.audiofx.AcousticEchoCanceler
 
 class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
     private var audioRecord: AudioRecord? = null
     private var encoder: AudioEncoder? = null
     private var recordJob: Job? = null
     private val scope = CoroutineScope(dispatcher + SupervisorJob())
+    
+    private var noiseSuppressor: NoiseSuppressor? = null
+    private var echoCanceler: AcousticEchoCanceler? = null
 
     private val _amplitudeFlow = MutableSharedFlow<Float>()
     val amplitudeFlow: SharedFlow<Float> = _amplitudeFlow
@@ -25,6 +30,7 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
 
     var gainFactor: Float = 1.0f
     var skipSilence: Boolean = false
+    var noiseReduction: Boolean = false
     private val SILENCE_THRESHOLD = 0.08f
     private var silentBufferCount = 0
     private var silentBufferLimit = 21 // Dynamically calculated later
@@ -68,6 +74,22 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
         isRecording = true
         isPaused = false
         silentBufferCount = 0
+        
+        val sessionId = audioRecord?.audioSessionId ?: 0
+        if (sessionId != 0 && noiseReduction) {
+            try {
+                if (NoiseSuppressor.isAvailable()) {
+                    noiseSuppressor = NoiseSuppressor.create(sessionId)
+                    noiseSuppressor?.enabled = true
+                }
+                if (AcousticEchoCanceler.isAvailable()) {
+                    echoCanceler = AcousticEchoCanceler.create(sessionId)
+                    echoCanceler?.enabled = true
+                }
+            } catch (e: Exception) {
+                // Ignore if device strictly restricts audiofx without specific conditions
+            }
+        }
         
         try {
             audioRecord?.startRecording()
@@ -136,6 +158,11 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
         isRecording = false
         recordJob?.cancel()
         recordJob = null
+        
+        noiseSuppressor?.release()
+        noiseSuppressor = null
+        echoCanceler?.release()
+        echoCanceler = null
 
         audioRecord?.run {
             stop()

@@ -20,7 +20,8 @@ data class UserSettings(
     val pauseForCall: Boolean = true,
     val languageCode: String = "en",
     val skipSilence: Boolean = false,
-    val micBoost: Boolean = false
+    val micBoost: Boolean = false,
+    val noiseReduction: Boolean = false
 )
 
 class AudioSettingsDataStore(private val context: Context) {
@@ -33,6 +34,7 @@ class AudioSettingsDataStore(private val context: Context) {
         val LANGUAGE_CODE = stringPreferencesKey("language_code")
         val SKIP_SILENCE = booleanPreferencesKey("skip_silence")
         val MIC_BOOST = booleanPreferencesKey("mic_boost")
+        val NOISE_REDUCTION = booleanPreferencesKey("noise_reduction")
     }
 
     fun getLanguageBlocking(): String {
@@ -54,7 +56,8 @@ class AudioSettingsDataStore(private val context: Context) {
             pauseForCall = prefs[Keys.PAUSE_FOR_CALL] ?: true,
             languageCode = prefs[Keys.LANGUAGE_CODE] ?: "en",
             skipSilence = prefs[Keys.SKIP_SILENCE] ?: false,
-            micBoost = prefs[Keys.MIC_BOOST] ?: false
+            micBoost = prefs[Keys.MIC_BOOST] ?: false,
+            noiseReduction = prefs[Keys.NOISE_REDUCTION] ?: false
         )
     }
 
@@ -69,4 +72,5 @@ class AudioSettingsDataStore(private val context: Context) {
     }
     suspend fun updateSkipSilence(enabled: Boolean) = context.dataStore.edit { it[Keys.SKIP_SILENCE] = enabled }
     suspend fun updateMicBoost(enabled: Boolean) = context.dataStore.edit { it[Keys.MIC_BOOST] = enabled }
+    suspend fun updateNoiseReduction(enabled: Boolean) = context.dataStore.edit { it[Keys.NOISE_REDUCTION] = enabled }
 }

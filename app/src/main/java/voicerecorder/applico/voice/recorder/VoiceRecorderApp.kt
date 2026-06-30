@@ -47,8 +47,8 @@ fun VoiceRecorderApp(
 
     LaunchedEffect(snackbarManager) {
         snackbarManager.messages.collect { message ->
-            val text = currentContext.getString(message.messageResId)
-            val actionLabel = message.actionLabelResId?.let { currentContext.getString(it) }
+            val text = message.messageText ?: message.messageResId?.let { currentContext.getString(it) } ?: ""
+            val actionLabel = message.actionLabelText ?: message.actionLabelResId?.let { currentContext.getString(it) }
             snackbarHostState.showSnackbar(message = text, actionLabel = actionLabel)
         }
     }
@@ -74,6 +74,18 @@ fun VoiceRecorderApp(
                 modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
             ) {
                 Text("Test Snackbar")
+            }
+
+            Button(
+                onClick = {
+                    val nsAvailable = android.media.audiofx.NoiseSuppressor.isAvailable()
+                    val aecAvailable = android.media.audiofx.AcousticEchoCanceler.isAvailable()
+                    val msg = "Hardware Support -> Noise Suppressor: $nsAvailable, Echo Canceler: $aecAvailable"
+                    snackbarManager.showMessage(msg)
+                },
+                modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
+            ) {
+                Text("Check Audio Hardware")
             }
             
             // --- Temporary Foreground Service Testing Buttons ---
