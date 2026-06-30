@@ -47,8 +47,8 @@ fun VoiceRecorderApp(
 
     LaunchedEffect(snackbarManager) {
         snackbarManager.messages.collect { message ->
-            val text = message.messageText ?: message.messageResId?.let { currentContext.getString(it) } ?: ""
-            val actionLabel = message.actionLabelText ?: message.actionLabelResId?.let { currentContext.getString(it) }
+            val text = currentContext.getString(message.messageResId)
+            val actionLabel = message.actionLabelResId?.let { currentContext.getString(it) }
             snackbarHostState.showSnackbar(message = text, actionLabel = actionLabel)
         }
     }
@@ -80,8 +80,11 @@ fun VoiceRecorderApp(
                 onClick = {
                     val nsAvailable = android.media.audiofx.NoiseSuppressor.isAvailable()
                     val aecAvailable = android.media.audiofx.AcousticEchoCanceler.isAvailable()
-                    val msg = "Hardware Support -> Noise Suppressor: $nsAvailable, Echo Canceler: $aecAvailable"
-                    snackbarManager.showMessage(msg)
+                    val msgRes = if (nsAvailable && aecAvailable) R.string.hardware_support_both
+                    else if (!nsAvailable && !aecAvailable) R.string.hardware_support_none
+                    else if (nsAvailable) R.string.hardware_support_ns_only
+                    else R.string.hardware_support_aec_only
+                    snackbarManager.showMessage(msgRes)
                 },
                 modifier = Modifier.padding(top = LocalDimensions.current.spacingMedium)
             ) {
