@@ -40,6 +40,7 @@ This document tracks all completed features of the Voice Recorder app and outlin
 1. **User Interface (Jetpack Compose)**
    - Main screen listing all recordings.
    - Active recording screen with live waveform visualizer.
+   - **Audio Bookmarking UI**: Massive "Drop Pin" button during recording, and an interactive waveform that allows users to tap past spikes to drop pins precisely.
    - Settings screen to choose recording format (WAV vs AAC).
 2. **Meaningful Unit Tests**
    - Mocking the audio byte stream to test the `WavEncoder` and `AacEncoder`.
