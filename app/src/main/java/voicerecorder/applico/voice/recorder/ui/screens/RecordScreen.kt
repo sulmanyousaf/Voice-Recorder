@@ -12,6 +12,7 @@ import voicerecorder.applico.voice.recorder.core.overlay.OverlayManager
 import voicerecorder.applico.voice.recorder.core.overlay.model.Overlay
 import org.koin.compose.koinInject
 import androidx.activity.compose.BackHandler
+import kotlinx.coroutines.launch
 
 @Composable
 fun RecordScreen(
@@ -21,11 +22,20 @@ fun RecordScreen(
 ) {
     val currentAmplitude by recordingController.amplitudeFlow.collectAsState(initial = 0f)
     val amplitudes = remember { mutableStateListOf<Float>() }
+    val scope = rememberCoroutineScope()
+
+    var showPinDialog by remember { mutableStateOf(false) }
+    var pinNoteText by remember { mutableStateOf("") }
+    var clickedAmplitudeIndex by remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(Unit) {
+        val history = recordingController.getHistoricalAmplitudes()
+        amplitudes.addAll(history)
+    }
 
     LaunchedEffect(currentAmplitude) {
-        amplitudes.add(currentAmplitude)
-        if (amplitudes.size > 200) {
-            amplitudes.removeAt(0)
+        if (currentAmplitude > 0f) {
+            amplitudes.add(currentAmplitude)
         }
     }
 
@@ -58,8 +68,52 @@ fun RecordScreen(
         
         WaveformView(
             amplitudes = amplitudes.toFloatArray(),
-            modifier = Modifier.fillMaxWidth().height(150.dp)
+            modifier = Modifier.fillMaxWidth().height(150.dp),
+            onWaveformClick = { index ->
+                clickedAmplitudeIndex = index
+                pinNoteText = ""
+                showPinDialog = true
+            }
         )
+        
+        if (showPinDialog) {
+            AlertDialog(
+                onDismissRequest = { 
+                    showPinDialog = false 
+                    clickedAmplitudeIndex = null
+                },
+                title = { Text("Add Pin") },
+                text = {
+                    TextField(
+                        value = pinNoteText,
+                        onValueChange = { pinNoteText = it },
+                        placeholder = { Text("Enter an optional note...") }
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val note = pinNoteText.takeIf { it.isNotBlank() }
+                        if (clickedAmplitudeIndex != null) {
+                            recordingController.pinAtAmplitudeIndex(clickedAmplitudeIndex!!, note)
+                        } else {
+                            recordingController.pinRecording(note = note)
+                        }
+                        showPinDialog = false
+                        clickedAmplitudeIndex = null
+                    }) {
+                        Text("Add Pin")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { 
+                        showPinDialog = false 
+                        clickedAmplitudeIndex = null
+                    }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
         
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -82,7 +136,11 @@ fun RecordScreen(
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Button(onClick = { recordingController.pinRecording() }) {
+            Button(onClick = { 
+                clickedAmplitudeIndex = null
+                pinNoteText = ""
+                showPinDialog = true
+            }) {
                 Text("Pin")
             }
             Button(onClick = { 

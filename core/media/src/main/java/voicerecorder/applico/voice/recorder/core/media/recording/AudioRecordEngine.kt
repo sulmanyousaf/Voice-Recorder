@@ -44,9 +44,14 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
     private var silentBufferCount = 0
     private var silentBufferLimit = 21 // Dynamically calculated later
 
+    var currentSampleRate: Int = 44100
+        private set
+
     @SuppressLint("MissingPermission")
     fun start(outputFile: File, format: String, sampleRate: Int, bitRate: Int, append: Boolean = false, amplitudesFile: File? = null) {
         if (isRecording) return
+
+        this.currentSampleRate = sampleRate
 
         val minBufferSize = AudioRecord.getMinBufferSize(
             sampleRate,

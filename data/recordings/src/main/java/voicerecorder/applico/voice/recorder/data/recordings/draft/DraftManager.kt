@@ -19,6 +19,7 @@ interface DraftManager {
     suspend fun hasDraft(): Boolean
     suspend fun getDraftFile(): File?
     suspend fun getAmplitudesFile(): File?
+    suspend fun getHistoricalAmplitudes(): List<Float>
     suspend fun saveMetadata(metadata: DraftMetadata)
     suspend fun getMetadata(): DraftMetadata?
     suspend fun discardDraft()
@@ -45,6 +46,27 @@ class DraftManagerImpl(private val context: Context) : DraftManager {
     override suspend fun getAmplitudesFile(): File? = withContext(Dispatchers.IO) {
         val file = File(context.cacheDir, AMPLITUDES_FILE_NAME)
         if (file.exists()) file else null
+    }
+
+    override suspend fun getHistoricalAmplitudes(): List<Float> = withContext(Dispatchers.IO) {
+        val file = File(context.cacheDir, AMPLITUDES_FILE_NAME)
+        if (!file.exists()) return@withContext emptyList()
+        
+        val amplitudes = mutableListOf<Float>()
+        try {
+            java.io.DataInputStream(file.inputStream()).use { dis ->
+                while (true) {
+                    try {
+                        amplitudes.add(dis.readFloat())
+                    } catch (e: java.io.EOFException) {
+                        break // End of file
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        amplitudes
     }
 
     override suspend fun saveMetadata(metadata: DraftMetadata): Unit = withContext(Dispatchers.IO) {

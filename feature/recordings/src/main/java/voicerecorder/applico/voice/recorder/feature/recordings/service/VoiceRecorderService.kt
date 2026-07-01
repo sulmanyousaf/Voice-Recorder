@@ -111,9 +111,11 @@ class VoiceRecorderService : Service() {
             context.startService(intent)
         }
         
-        fun pin(context: Context) {
+        fun pin(context: Context, note: String? = null, timestampMs: Long? = null) {
             val intent = Intent(context, VoiceRecorderService::class.java).apply {
                 action = ACTION_PIN
+                putExtra("note", note)
+                putExtra("timestampMs", timestampMs ?: -1L)
             }
             context.startService(intent)
         }
@@ -122,14 +124,21 @@ class VoiceRecorderService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when (intent?.action) {
-            ACTION_START -> startRecording()
-            ACTION_PAUSE -> pauseRecording()
-            ACTION_RESUME -> resumeRecording()
-            ACTION_SAVE -> saveRecording()
-            ACTION_DISCARD -> discardRecording()
-            ACTION_PIN -> pinRecording()
-            ACTION_RESUME_DRAFT -> resumeDraft()
+        if (intent != null) {
+            when (intent.action) {
+                ACTION_START -> startRecording()
+                ACTION_PAUSE -> pauseRecording()
+                ACTION_RESUME -> resumeRecording()
+                ACTION_SAVE -> saveRecording()
+                ACTION_DISCARD -> discardRecording()
+                ACTION_PIN -> {
+                    val note = intent.getStringExtra("note")
+                    val ts = intent.getLongExtra("timestampMs", -1L)
+                    val timestampMs = if (ts != -1L) ts else null
+                    pinRecording(note, timestampMs)
+                }
+                ACTION_RESUME_DRAFT -> resumeDraft()
+            }
         }
         return START_STICKY
     }
@@ -265,16 +274,17 @@ class VoiceRecorderService : Service() {
         updateForegroundNotification()
     }
 
-    private fun pinRecording() {
+    private fun pinRecording(note: String? = null, exactTimestampMs: Long? = null) {
         if (!isRecording) return
         val recordingId = currentRecordingId
-        val timestampMs = secondsElapsed * 1000L
+        val timestampMs = exactTimestampMs ?: (secondsElapsed * 1000L)
+        val noteText = note ?: "Pinned at ${formatDuration((timestampMs / 1000L).toInt())}"
         serviceScope.launch {
             bookmarkDao.insertBookmark(
                 BookmarkEntity(
                     recordingId = recordingId,
                     timestampMs = timestampMs,
-                    noteText = "Pinned at ${formatDuration(secondsElapsed)}"
+                    noteText = noteText
                 )
             )
         }
@@ -429,6 +439,7 @@ class VoiceRecorderService : Service() {
         
         val pinIntent = Intent(this, VoiceRecorderService::class.java).apply {
             action = ACTION_PIN
+            // No note or timestamp for the notification action; it will just pin at current time
         }
         val pinPendingIntent = PendingIntent.getService(
             this,

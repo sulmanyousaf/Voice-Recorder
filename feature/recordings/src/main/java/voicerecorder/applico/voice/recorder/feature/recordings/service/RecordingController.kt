@@ -19,13 +19,16 @@ interface RecordingController {
     fun resumeDraft()
     fun saveRecording()
     fun discardRecording()
-    fun pinRecording()
+    fun pinRecording(note: String? = null, timestampMs: Long? = null)
+    fun pinAtAmplitudeIndex(index: Int, note: String? = null)
+    suspend fun getHistoricalAmplitudes(): List<Float>
 }
 
 class RecordingControllerImpl(
     private val context: Context,
     private val snackbarManager: SnackbarManager,
-    private val audioRecordEngine: AudioRecordEngine
+    private val audioRecordEngine: AudioRecordEngine,
+    private val draftManager: voicerecorder.applico.voice.recorder.data.recordings.draft.DraftManager
 ) : RecordingController {
 
     override val amplitudeFlow: Flow<Float>
@@ -66,7 +69,17 @@ class RecordingControllerImpl(
         VoiceRecorderService.discard(context)
     }
     
-    override fun pinRecording() {
-        VoiceRecorderService.pin(context)
+    override fun pinRecording(note: String?, timestampMs: Long?) {
+        VoiceRecorderService.pin(context, note, timestampMs)
+    }
+
+    override fun pinAtAmplitudeIndex(index: Int, note: String?) {
+        val sampleRate = audioRecordEngine.currentSampleRate
+        val timestampMs = (index.toLong() * 2048L * 1000L) / sampleRate.toLong()
+        pinRecording(note, timestampMs)
+    }
+
+    override suspend fun getHistoricalAmplitudes(): List<Float> {
+        return draftManager.getHistoricalAmplitudes()
     }
 }
