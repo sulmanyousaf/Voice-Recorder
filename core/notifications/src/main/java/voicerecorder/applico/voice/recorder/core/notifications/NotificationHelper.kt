@@ -247,7 +247,8 @@ class NotificationHelper(private val context: Context) {
         pinIntent: PendingIntent,
         pauseResumeIntent: PendingIntent,
         saveIntent: PendingIntent,
-        discardIntent: PendingIntent
+        discardIntent: PendingIntent,
+        deleteIntent: PendingIntent
     ): android.app.Notification {
         
         val title = if (isPaused) {
@@ -282,6 +283,7 @@ class NotificationHelper(private val context: Context) {
             .setOngoing(true)
             .setSilent(true)
             .setContentIntent(bodyPendingIntent)
+            .setDeleteIntent(deleteIntent)
             .addAction(android.R.drawable.ic_menu_edit, context.getString(R.string.notification_action_pin), pinIntent)
             .addAction(pauseResumeIcon, pauseResumeActionLabel, pauseResumeIntent)
             .addAction(android.R.drawable.ic_menu_save, context.getString(R.string.notification_action_save), saveIntent)

@@ -467,13 +467,24 @@ class VoiceRecorderService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val deleteIntent = Intent(this, VoiceRecorderService::class.java).apply {
+            action = ACTION_SAVE // Save the recording when swiped away!
+        }
+        val deletePendingIntent = PendingIntent.getService(
+            this, 
+            5, 
+            deleteIntent, 
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = notificationHelper.buildRecordingNotification(
             isPaused = isPaused,
             durationStr = durationStr,
             pinIntent = pinPendingIntent,
             pauseResumeIntent = pauseResumePendingIntent,
             saveIntent = savePendingIntent,
-            discardIntent = discardPendingIntent
+            discardIntent = discardPendingIntent,
+            deleteIntent = deletePendingIntent
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
