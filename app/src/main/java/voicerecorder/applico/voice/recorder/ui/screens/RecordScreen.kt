@@ -137,7 +137,7 @@ fun RecordScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Button(onClick = { 
-                clickedAmplitudeIndex = null
+                clickedAmplitudeIndex = amplitudes.lastIndex.coerceAtLeast(0)
                 pinNoteText = ""
                 showPinDialog = true
             }) {
