@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.media.storage
+package voicerecorder.applico.voice.recorder.core.media.storage
 
 import android.content.ContentValues
 import android.content.Context
@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import java.io.File
+import android.util.Log
 
 interface RecordingStorage {
     fun getTempFile(format: String): Result<File>
@@ -28,7 +29,7 @@ class AndroidRecordingStorage(private val context: Context) : RecordingStorage {
         val recordingsDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             Environment.DIRECTORY_RECORDINGS
         } else {
-            "Recordings"
+            Environment.DIRECTORY_MUSIC
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -58,6 +59,7 @@ class AndroidRecordingStorage(private val context: Context) : RecordingStorage {
             @Suppress("DEPRECATION")
             val publicDir = File(Environment.getExternalStoragePublicDirectory(recordingsDir), "VoiceRecorder")
             if (!publicDir.exists() && !publicDir.mkdirs()) {
+                 Log.e("AndroidRecordingStorage", "Failed to create public directory: ${publicDir.absolutePath}")
                  throw java.io.IOException("Failed to create public directory")
             }
             val targetFile = File(publicDir, "$displayName.$ext")

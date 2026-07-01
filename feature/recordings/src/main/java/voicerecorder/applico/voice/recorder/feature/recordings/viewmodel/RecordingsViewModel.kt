@@ -8,8 +8,13 @@ import kotlinx.coroutines.flow.stateIn
 import voicerecorder.applico.voice.recorder.data.recordings.model.LocalRecording
 import voicerecorder.applico.voice.recorder.data.recordings.repository.RecordingRepository
 
+import voicerecorder.applico.voice.recorder.core.database.dao.BookmarkDao
+import voicerecorder.applico.voice.recorder.core.database.entity.BookmarkEntity
+import kotlinx.coroutines.flow.Flow
+
 class RecordingsViewModel(
-    private val recordingRepository: RecordingRepository
+    private val recordingRepository: RecordingRepository,
+    private val bookmarkDao: BookmarkDao
 ) : ViewModel() {
 
     val recordings: StateFlow<List<LocalRecording>> = recordingRepository
@@ -19,4 +24,8 @@ class RecordingsViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    fun getBookmarksFlow(recordingId: String): Flow<List<BookmarkEntity>> {
+        return bookmarkDao.getBookmarksForRecordingFlow(recordingId)
+    }
 }

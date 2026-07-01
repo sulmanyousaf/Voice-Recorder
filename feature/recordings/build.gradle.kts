@@ -10,5 +10,6 @@ dependencies {
     implementation(project(":core:media"))
     implementation(project(":core:permissions"))
     implementation(project(":core:overlay"))
+    implementation(project(":core:database"))
     implementation(project(":data:recordings"))
 }

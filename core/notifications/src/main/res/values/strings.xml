@@ -34,4 +34,7 @@
     <string name="notification_action_pause">Pause</string>
     <string name="notification_action_resume">Resume</string>
     <string name="notification_action_stop">Stop</string>
+    <string name="notification_action_pin">Pin</string>
+    <string name="notification_action_save">Save</string>
+    <string name="notification_action_discard">Discard</string>
 </resources>

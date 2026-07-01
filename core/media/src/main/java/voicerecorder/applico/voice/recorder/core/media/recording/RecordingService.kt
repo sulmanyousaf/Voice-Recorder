@@ -202,12 +202,14 @@ class RecordingService : Service() {
 
     private fun stopRecording() {
         timerJob?.cancel()
-        recordingEngine.stop()
         audioFocusManager?.abandonAudioFocus()
         teardownBluetoothSco()
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        serviceManager.updateState(RecordingState.Idle)
-        stopSelf()
+        serviceScope.launch {
+            recordingEngine.stop()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            serviceManager.updateState(RecordingState.Idle)
+            stopSelf()
+        }
     }
 
     override fun onDestroy() {

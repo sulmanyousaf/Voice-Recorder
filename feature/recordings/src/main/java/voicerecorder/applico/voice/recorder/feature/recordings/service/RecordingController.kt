@@ -16,7 +16,10 @@ interface RecordingController {
     fun startRecording()
     fun pauseRecording()
     fun resumeRecording()
-    fun stopRecording()
+    fun resumeDraft()
+    fun saveRecording()
+    fun discardRecording()
+    fun pinRecording()
 }
 
 class RecordingControllerImpl(
@@ -51,7 +54,19 @@ class RecordingControllerImpl(
         VoiceRecorderService.resume(context)
     }
 
-    override fun stopRecording() {
-        VoiceRecorderService.stop(context)
+    override fun resumeDraft() {
+        VoiceRecorderService.resumeDraft(context)
+    }
+
+    override fun saveRecording() {
+        VoiceRecorderService.save(context)
+    }
+    
+    override fun discardRecording() {
+        VoiceRecorderService.discard(context)
+    }
+    
+    override fun pinRecording() {
+        VoiceRecorderService.pin(context)
     }
 }

@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.database.di
+package voicerecorder.applico.voice.recorder.core.database.di
 
 import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
@@ -11,7 +11,10 @@ val databaseModule = module {
             androidContext(),
             AppDatabase::class.java,
             "voice_recorder_app_db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration()
+        .build()
     }
     single { get<AppDatabase>().recordingDao() }
+    single { get<AppDatabase>().bookmarkDao() }
 }

@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.media.recording.encoder
+package voicerecorder.applico.voice.recorder.core.media.recording.encoder
 
 import java.io.File
 import java.io.RandomAccessFile
@@ -11,12 +11,20 @@ class WavEncoder : AudioEncoder {
     private var totalDataLen: Long = 0
     private var sampleRate: Int = 44100
 
-    override fun start(outputFile: File, sampleRate: Int, bitRate: Int) {
+    override fun start(outputFile: File, sampleRate: Int, bitRate: Int, append: Boolean) {
         this.sampleRate = sampleRate
-        totalAudioLen = 0
-        totalDataLen = 0
+        
         randomAccessFile = RandomAccessFile(outputFile, "rw")
-        randomAccessFile?.write(ByteArray(44))
+        
+        if (append && outputFile.exists() && outputFile.length() > 44) {
+            totalAudioLen = outputFile.length() - 44
+            totalDataLen = totalAudioLen + 36
+            randomAccessFile?.seek(outputFile.length())
+        } else {
+            totalAudioLen = 0
+            totalDataLen = 0
+            randomAccessFile?.write(ByteArray(44))
+        }
     }
 
     override fun encode(pcmBuffer: ShortArray, bytesRead: Int) {
@@ -29,10 +37,14 @@ class WavEncoder : AudioEncoder {
     }
 
     override fun stop() {
-        totalDataLen = totalAudioLen + 36
-        randomAccessFile?.seek(0)
-        writeWavHeader()
-        randomAccessFile?.close()
+        try {
+            totalDataLen = totalAudioLen + 36
+            randomAccessFile?.seek(0)
+            writeWavHeader()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try { randomAccessFile?.close() } catch (e: Exception) { e.printStackTrace() }
         randomAccessFile = null
     }
 

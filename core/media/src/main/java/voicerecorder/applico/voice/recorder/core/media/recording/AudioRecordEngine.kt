@@ -8,8 +8,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import voicerecorder.applico.voice.recorder.core.media.recording.encoder.*
+import java.io.DataOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.abs
+import android.util.Log
 import android.media.audiofx.NoiseSuppressor
 import android.media.audiofx.AcousticEchoCanceler
 
@@ -22,7 +25,13 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
     private var noiseSuppressor: NoiseSuppressor? = null
     private var echoCanceler: AcousticEchoCanceler? = null
 
-    private val _amplitudeFlow = MutableSharedFlow<Float>()
+    private var amplitudesOutputStream: DataOutputStream? = null
+
+    private val _amplitudeFlow = MutableSharedFlow<Float>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
+    )
     val amplitudeFlow: SharedFlow<Float> = _amplitudeFlow
 
     private var isRecording = false
@@ -36,7 +45,7 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
     private var silentBufferLimit = 21 // Dynamically calculated later
 
     @SuppressLint("MissingPermission")
-    fun start(outputFile: File, format: String, sampleRate: Int, bitRate: Int) {
+    fun start(outputFile: File, format: String, sampleRate: Int, bitRate: Int, append: Boolean = false, amplitudesFile: File? = null) {
         if (isRecording) return
 
         val minBufferSize = AudioRecord.getMinBufferSize(
@@ -57,9 +66,17 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
             "WAV" -> WavEncoder()
             "MP3" -> Mp3Encoder()
             "AAC" -> AacEncoder(useMuxer = false)
-            else -> AacEncoder(useMuxer = true)
+            else -> AacEncoder(useMuxer = !append)
         }.apply {
-            start(outputFile, sampleRate, bitRate)
+            start(outputFile, sampleRate, bitRate, append)
+        }
+
+        if (amplitudesFile != null) {
+            try {
+                amplitudesOutputStream = DataOutputStream(FileOutputStream(amplitudesFile, append))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         if (audioRecord?.state != AudioRecord.STATE_INITIALIZED) {
@@ -125,7 +142,13 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
                     }
                     
                     val amplitude = max.toFloat() / 32767f
-                    _amplitudeFlow.emit(amplitude)
+                    _amplitudeFlow.tryEmit(amplitude)
+                    
+                    try {
+                        amplitudesOutputStream?.writeFloat(amplitude)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                     
                     if (skipSilence) {
                         if (amplitude < SILENCE_THRESHOLD) {
@@ -153,10 +176,10 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
         isPaused = false
     }
 
-    fun stop() {
+    suspend fun stop() {
         if (!isRecording) return
         isRecording = false
-        recordJob?.cancel()
+        recordJob?.join()
         recordJob = null
         
         noiseSuppressor?.release()
@@ -165,12 +188,19 @@ class AudioRecordEngine(private val dispatcher: CoroutineDispatcher = Dispatcher
         echoCanceler = null
 
         audioRecord?.run {
-            stop()
-            release()
+            try { stop() } catch (e: Exception) { Log.e("AudioRecordEngine", "Error stopping AudioRecord", e) }
+            try { release() } catch (e: Exception) { Log.e("AudioRecordEngine", "Error releasing AudioRecord", e) }
         }
         audioRecord = null
 
-        encoder?.stop()
+        try { encoder?.stop() } catch (e: Exception) { Log.e("AudioRecordEngine", "Error stopping encoder", e) }
         encoder = null
+        
+        try {
+            amplitudesOutputStream?.close()
+            amplitudesOutputStream = null
+        } catch (e: Exception) {
+            Log.e("AudioRecordEngine", "Error closing amplitudesOutputStream", e)
+        }
     }
 }

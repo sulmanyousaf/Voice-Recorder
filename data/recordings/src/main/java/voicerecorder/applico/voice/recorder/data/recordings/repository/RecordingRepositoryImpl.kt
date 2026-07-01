@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.data.recordings.repository
+package voicerecorder.applico.voice.recorder.data.recordings.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -8,6 +8,7 @@ import voicerecorder.applico.voice.recorder.core.media.storage.RecordingStorage
 import voicerecorder.applico.voice.recorder.data.recordings.model.LocalRecording
 import voicerecorder.applico.voice.recorder.data.recordings.scanner.MediaStoreScanner
 import java.io.File
+import android.util.Log
 
 class RecordingRepositoryImpl(
     private val recordingDao: RecordingDao,
@@ -58,7 +59,7 @@ class RecordingRepositoryImpl(
             )
             recordingDao.insertRecording(entity)
         }.onFailure { exception ->
-            exception.printStackTrace()
+            Log.e("RecordingRepository", "Failed to save recording to public folder", exception)
             throw exception
         }
     }

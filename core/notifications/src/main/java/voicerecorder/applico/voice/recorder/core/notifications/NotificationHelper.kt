@@ -244,8 +244,10 @@ class NotificationHelper(private val context: Context) {
     fun buildRecordingNotification(
         isPaused: Boolean,
         durationStr: String,
+        pinIntent: PendingIntent,
         pauseResumeIntent: PendingIntent,
-        stopIntent: PendingIntent
+        saveIntent: PendingIntent,
+        discardIntent: PendingIntent
     ): android.app.Notification {
         
         val title = if (isPaused) {
@@ -280,9 +282,11 @@ class NotificationHelper(private val context: Context) {
             .setOngoing(true)
             .setSilent(true)
             .setContentIntent(bodyPendingIntent)
+            .addAction(android.R.drawable.ic_menu_edit, context.getString(R.string.notification_action_pin), pinIntent)
             .addAction(pauseResumeIcon, pauseResumeActionLabel, pauseResumeIntent)
-            .addAction(android.R.drawable.ic_media_previous, context.getString(R.string.notification_action_stop), stopIntent)
-            .setStyle(androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(0, 1))
+            .addAction(android.R.drawable.ic_menu_save, context.getString(R.string.notification_action_save), saveIntent)
+            .addAction(android.R.drawable.ic_menu_delete, context.getString(R.string.notification_action_discard), discardIntent)
+            .setStyle(androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(1, 2))
             .build()
     }
 }

@@ -1,4 +1,4 @@
-﻿package voicerecorder.applico.voice.recorder.core.media.recording.encoder
+package voicerecorder.applico.voice.recorder.core.media.recording.encoder
 
 import java.io.File
 import java.io.FileOutputStream
@@ -8,7 +8,7 @@ class Mp3Encoder : AudioEncoder {
     private var outputStream: FileOutputStream? = null
     private var mp3Buffer: ByteArray? = null
 
-    override fun start(outputFile: File, sampleRate: Int, bitRate: Int) {
+    override fun start(outputFile: File, sampleRate: Int, bitRate: Int, append: Boolean) {
         lame.init(
             inSampleRate = sampleRate,
             outChannel = 1,
@@ -16,7 +16,7 @@ class Mp3Encoder : AudioEncoder {
             outBitrate = bitRate / 1000,
             quality = 5
         )
-        outputStream = FileOutputStream(outputFile)
+        outputStream = FileOutputStream(outputFile, append)
         mp3Buffer = ByteArray((7200 + 1.25 * 4096).toInt())
     }
 
@@ -30,12 +30,16 @@ class Mp3Encoder : AudioEncoder {
 
     override fun stop() {
         val buffer = mp3Buffer ?: return
-        val size = lame.flush(buffer)
-        if (size > 0) {
-            outputStream?.write(buffer, 0, size)
+        try {
+            val size = lame.flush(buffer)
+            if (size > 0) {
+                outputStream?.write(buffer, 0, size)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        lame.close()
-        outputStream?.close()
+        try { lame.close() } catch (e: Exception) { e.printStackTrace() }
+        try { outputStream?.close() } catch (e: Exception) { e.printStackTrace() }
         outputStream = null
         mp3Buffer = null
     }

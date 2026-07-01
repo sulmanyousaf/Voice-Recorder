@@ -7,10 +7,13 @@ import voicerecorder.applico.voice.recorder.core.media.recording.AudioRecordEngi
 import voicerecorder.applico.voice.recorder.core.media.recording.RecordingServiceManager
 import voicerecorder.applico.voice.recorder.core.media.storage.AndroidRecordingStorage
 import voicerecorder.applico.voice.recorder.core.media.storage.RecordingStorage
+import voicerecorder.applico.voice.recorder.core.media.storage.AudioTagger
+import voicerecorder.applico.voice.recorder.core.media.storage.AudioTaggerImpl
 
 val mediaModule = module {
     single { AudioRecordEngine() }
     single<RecordingStorage> { AndroidRecordingStorage(androidContext()) }
     single { PlaybackEngine(androidContext()) }
     single { RecordingServiceManager() }
+    single<AudioTagger> { AudioTaggerImpl() }
 }
