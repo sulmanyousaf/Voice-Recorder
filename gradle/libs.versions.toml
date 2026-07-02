@@ -23,6 +23,7 @@ detekt = "1.23.8"
 mockk = "1.14.11"
 coroutinesTest = "1.11.0"
 jaudiotagger = "3.0.1"
+mp4parser = "1.9.41"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,7 @@ androidx-media3-session = { group = "androidx.media3", name = "media3-session", 
 
 # Audio Tagger
 jaudiotagger = { group = "net.jthink", name = "jaudiotagger", version.ref = "jaudiotagger" }
+mp4parser = { group = "org.mp4parser", name = "isoparser", version.ref = "mp4parser" }
 
 # Media (for NotificationCompat.MediaStyle)
 androidx-media = { group = "androidx.media", name = "media", version.ref = "mediaVersion" }
